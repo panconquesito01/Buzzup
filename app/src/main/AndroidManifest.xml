@@ -16,7 +16,7 @@
         <activity
             android:name=".SplashActivity"
             android:exported="true"
-            android:theme="@style/Theme.MyApp.Splash">
+            android:theme="@style/Theme.Buzzup.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -24,7 +24,7 @@
         </activity>
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".LOGIN.LoginActivity"
             android:exported="false" />
     </application>
 

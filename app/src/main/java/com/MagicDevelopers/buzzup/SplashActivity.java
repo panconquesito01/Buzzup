@@ -1,31 +1,50 @@
 package com.MagicDevelopers.buzzup;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageView;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import com.MagicDevelopers.buzzup.LOGIN.LoginActivity;
+import com.bumptech.glide.Glide;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Configurar el tema oscuro o claro automáticamente
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-
+        // Establecer el layout
         setContentView(R.layout.activity_splash);
 
-        // Esperar 3 segundos y luego ir a la actividad principal
+        // Ocultar la barra de estado y hacerla transparente
+        Window window = getWindow();
+        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        window.setStatusBarColor(Color.TRANSPARENT);
+
+        // Detectar el modo oscuro o claro correctamente
+        ImageView logoImage = findViewById(R.id.logoImage);
+        int nightModeFlags = getApplicationContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+            logoImage.setImageResource(R.drawable.logo_dark);
+        } else {
+            logoImage.setImageResource(R.drawable.logo_light);
+        }
+
+        // Cargar GIF en el ImageView usando Glide
+        ImageView loadingGif = findViewById(R.id.loadingGif);
+        Glide.with(this).asGif().load(R.drawable.loading).into(loadingGif);
+
+        // Pantalla de carga por 4 segundos y redirigir a LoginActivity
         new Handler().postDelayed(() -> {
             startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-            finish(); // Cierra la pantalla de carga para que no vuelva atrás
-        }, 3000);
+            finish();
+        }, 4000);
     }
 }
