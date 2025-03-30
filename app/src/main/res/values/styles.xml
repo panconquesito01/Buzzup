@@ -3,5 +3,9 @@
     <!-- Tema base de la app -->
     <style name="Theme.MyApp.Splash" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowBackground">@color/white</item>
+
     </style>
+
+
+
 </resources>

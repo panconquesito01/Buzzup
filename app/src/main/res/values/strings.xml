@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Buzzup</string>
+    <string name="default_web_client_id">593315023262-hj99f2vne4prbbgt8u8vdl1dcfnt8929.apps.googleusercontent.com</string>
+
 </resources>

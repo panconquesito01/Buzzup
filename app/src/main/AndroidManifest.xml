@@ -12,17 +12,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Buzzup"
         tools:targetApi="31">
-
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LOGIN.RegisterActivity"
+            android:theme="@style/Theme.Buzzup"
+            android:label="@string/app_name"
+            android:exported="false" />
         <activity
             android:name=".SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.Buzzup.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".LOGIN.LoginActivity"
             android:exported="false" />
