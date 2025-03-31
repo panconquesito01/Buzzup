@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/registro4Layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LOGIN.Registro.Registro4Activity">
+
+    <!-- Título descriptivo -->
+    <TextView
+        android:id="@+id/tvTituloRegistro4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Selecciona tu foto de perfil"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="?attr/colorOnBackground"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="40dp"/>
+
+    <!-- Descripción amigable -->
+    <TextView
+        android:id="@+id/tvDescripcionRegistro4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Elige una imagen que te represente. Podrás recortarla para ajustar tu foto de perfil."
+        android:textSize="16sp"
+        android:gravity="center"
+        android:textColor="?attr/colorOnBackground"
+        app:layout_constraintTop_toBottomOf="@id/tvTituloRegistro4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="8dp"/>
+
+    <!-- CircleImageView para mostrar la foto de perfil (placeholder o recortada) -->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ivProfile"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/usuariologo"
+        android:contentDescription="Foto de perfil"
+        app:civ_border_width="2dp"
+        app:civ_border_color="@android:color/transparent"
+        app:layout_constraintTop_toBottomOf="@id/tvDescripcionRegistro4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <!-- Botón para seleccionar la imagen -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSeleccionarFoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Seleccionar imagen"
+        android:textAllCaps="false"
+        app:cornerRadius="16dp"
+        android:backgroundTint="?attr/colorPrimary"
+        android:textColor="?attr/colorOnPrimary"
+        app:layout_constraintTop_toBottomOf="@id/ivProfile"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Botón para continuar -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnContinuarRegistro4"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:text="Continuar"
+        android:textAllCaps="false"
+        app:cornerRadius="16dp"
+        android:backgroundTint="?attr/colorPrimary"
+        android:textColor="?attr/colorOnPrimary"
+        app:layout_constraintTop_toBottomOf="@id/btnSeleccionarFoto"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="32dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

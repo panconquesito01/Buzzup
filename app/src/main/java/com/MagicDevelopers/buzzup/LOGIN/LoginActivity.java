@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.MagicDevelopers.buzzup.LOGIN.Registro.Registro1Activity;
 import com.MagicDevelopers.buzzup.MainActivity;
 import com.MagicDevelopers.buzzup.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -57,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
 
-        // Ajustar colores del logo y textos según el tema
+        // Ajustar colores del logo, textos y botones según el tema
         setLogoAndTextColors();
 
         // Acción de inicio de sesión con correo
@@ -75,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Acción de registro
         registerButton.setOnClickListener(v -> {
-            Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+            Intent registerIntent = new Intent(LoginActivity.this, Registro1Activity.class);
             startActivity(registerIntent);
         });
 
@@ -87,6 +88,9 @@ public class LoginActivity extends AppCompatActivity {
         ImageView logoImage = findViewById(R.id.logoImage);
         TextView titleText = findViewById(R.id.titleText);
         TextView infoText = findViewById(R.id.infoText);
+        // Se obtienen también los botones para actualizar su color
+        MaterialButton loginButton = findViewById(R.id.loginButton);
+        MaterialButton registerButton = findViewById(R.id.registerButton);
 
         boolean isDarkMode = (getResources().getConfiguration().uiMode &
                 Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
@@ -95,10 +99,16 @@ public class LoginActivity extends AppCompatActivity {
             logoImage.setImageResource(R.drawable.logo_dark);
             titleText.setTextColor(ContextCompat.getColor(this, android.R.color.white));
             infoText.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+            // En modo oscuro, los botones tendrán el texto en negro
+            loginButton.setTextColor(Color.BLACK);
+            registerButton.setTextColor(Color.BLACK);
         } else {
             logoImage.setImageResource(R.drawable.logo_light);
             titleText.setTextColor(ContextCompat.getColor(this, android.R.color.black));
             infoText.setTextColor(ContextCompat.getColor(this, android.R.color.black));
+            // En modo claro, los botones tendrán el texto en blanco
+            loginButton.setTextColor(Color.WHITE);
+            registerButton.setTextColor(Color.WHITE);
         }
     }
 

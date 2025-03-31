@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/registro5Layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LOGIN.Registro.Registro5Activity">
+
+    <!-- Título descriptivo -->
+    <TextView
+        android:id="@+id/tvTituloRegistro5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Selecciona y edita tu foto para publicar"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="?attr/colorOnBackground"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <!-- Descripción amigable -->
+    <TextView
+        android:id="@+id/tvDescripcionRegistro5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Elige una de las opciones, carga tu imagen y edítala para ajustarla a tu perfil."
+        android:textSize="16sp"
+        android:gravity="center"
+        android:textColor="?attr/colorOnBackground"
+        app:layout_constraintTop_toBottomOf="@id/tvTituloRegistro5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Contenedor horizontal para las tres opciones -->
+    <LinearLayout
+        android:id="@+id/optionsContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/tvDescripcionRegistro5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp">
+
+        <!-- Opción 1: Rectángulo con esquinas redondeadas (placeholder) -->
+        <ImageView
+            android:id="@+id/ivOption1"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/agregar_light"
+            android:alpha="0.6"
+            android:background="@drawable/rounded_option_bg" />
+
+        <!-- Opción 2 -->
+        <ImageView
+            android:id="@+id/ivOption2"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/agregar_light"
+            android:alpha="0.6"
+            android:background="@drawable/rounded_option_bg"
+            android:layout_marginStart="16dp" />
+
+        <!-- Opción 3 -->
+        <ImageView
+            android:id="@+id/ivOption3"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/agregar_light"
+            android:alpha="0.6"
+            android:background="@drawable/rounded_option_bg"
+            android:layout_marginStart="16dp" />
+    </LinearLayout>
+
+    <!-- PhotoEditorView para editar la imagen (con relación de aspecto 19:6) -->
+    <ja.burhanrashid52.photoeditor.PhotoEditorView
+        android:id="@+id/photoEditorView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/rounded_bg"
+        app:layout_constraintTop_toBottomOf="@id/optionsContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintDimensionRatio="19:6"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"/>
+
+    <!-- Botón para terminar la edición (inicialmente oculto) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnTerminarEdicion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Terminar edición"
+        android:textAllCaps="false"
+        android:visibility="gone"
+        app:cornerRadius="16dp"
+        android:backgroundTint="?attr/colorPrimary"
+        android:textColor="?attr/colorOnPrimary"
+        app:layout_constraintTop_toBottomOf="@id/photoEditorView"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"/>
+
+    <!-- Botón para continuar al siguiente registro -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnContinuarRegistro5"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:text="Continuar"
+        android:textAllCaps="false"
+        app:cornerRadius="16dp"
+        android:backgroundTint="?attr/colorPrimary"
+        android:textColor="?attr/colorOnPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginBottom="32dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

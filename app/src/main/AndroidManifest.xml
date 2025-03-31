@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,13 +16,35 @@
         android:theme="@style/Theme.Buzzup"
         tools:targetApi="31">
         <activity
+            android:name=".LOGIN.Registro.Registro6Activity"
+            android:exported="false" />
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".LOGIN.Registro.Registro5Activity"
+            android:exported="false" />
+        <activity
+            android:name=".LOGIN.Registro.Registro4Activity"
+            android:exported="false" />
+        <activity
+            android:name=".LOGIN.Registro.Registro3Activity"
+            android:exported="false" />
+        <activity
+            android:name=".LOGIN.Registro.Registro2Activity"
+            android:exported="false" />
+        <activity
+            android:name=".LOGIN.Registro.Registro1Activity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".LOGIN.RegisterActivity"
-            android:theme="@style/Theme.Buzzup"
+            android:name=".LOGIN.Registro.RegisterActivity"
+            android:exported="false"
             android:label="@string/app_name"
-            android:exported="false" />
+            android:theme="@style/Theme.Buzzup" />
         <activity
             android:name=".SplashActivity"
             android:exported="true"
