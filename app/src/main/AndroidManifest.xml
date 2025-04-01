@@ -20,16 +20,10 @@
             android:name=".HOME.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".HOME.HomeActivity1"
-            android:exported="false" />
-        <activity
             android:name=".LOGIN.TwoFactorAuthActivity"
             android:exported="false" />
         <activity
             android:name=".LOGIN.RecuperarContrasenaActivity"
-            android:exported="false" />
-        <activity
-            android:name=".LOGIN.Registro.Registro6Activity"
             android:exported="false" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
