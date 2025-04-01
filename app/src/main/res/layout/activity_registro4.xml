@@ -83,4 +83,19 @@
         android:layout_marginHorizontal="32dp"
         android:layout_marginTop="32dp"/>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAhoraNo"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:text="Ahora no"
+        android:textAllCaps="false"
+        app:cornerRadius="16dp"
+        android:backgroundTint="?attr/colorPrimary"
+        android:textColor="?attr/colorOnPrimary"
+        app:layout_constraintTop_toBottomOf="@id/btnContinuarRegistro4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="16dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

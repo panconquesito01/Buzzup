@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -16,6 +16,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Buzzup"
         tools:targetApi="31">
+        <activity
+            android:name=".HOME.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HOME.HomeActivity1"
+            android:exported="false" />
+        <activity
+            android:name=".LOGIN.TwoFactorAuthActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LOGIN.RecuperarContrasenaActivity"
+            android:exported="false" />
         <activity
             android:name=".LOGIN.Registro.Registro6Activity"
             android:exported="false" />
@@ -37,9 +49,6 @@
             android:exported="false" />
         <activity
             android:name=".LOGIN.Registro.Registro1Activity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".LOGIN.Registro.RegisterActivity"

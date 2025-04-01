@@ -1,11 +1,12 @@
 package com.MagicDevelopers.buzzup.LOGIN.Registro;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.widget.Toast;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -54,7 +55,15 @@ public class Registro1Activity extends AppCompatActivity {
             // Crear el objeto Usuario con los datos de Registro1 usando el constructor de 3 parámetros
             Usuario usuario = new Usuario(nombre, apellido, descripcion);
 
-            // Pasar el objeto Usuario a la siguiente Activity sin guardar en Firebase todavía
+            // Guardar los datos localmente en SharedPreferences
+            SharedPreferences sharedPreferences = getSharedPreferences("UsuarioPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("nombre", usuario.getNombre());
+            editor.putString("apellido", usuario.getApellido());
+            editor.putString("descripcion", usuario.getDescripcion());
+            editor.apply();
+
+            // Pasar el objeto Usuario a la siguiente Activity (Registro2Activity)
             Intent intent = new Intent(Registro1Activity.this, Registro2Activity.class);
             intent.putExtra("usuario", usuario);
             startActivity(intent);

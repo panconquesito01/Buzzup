@@ -1,40 +1,33 @@
 package com.MagicDevelopers.buzzup.Modelos;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.UUID;
 
 public class Usuario implements Serializable {
-    // Identificadores únicos
     private String userid;
     private String receptorid;
     private String emisorid;
 
-    // Registro1
     private String nombre;
     private String apellido;
     private String descripcion;
-
-    // Registro2
     private String correo;
     private String contrasena;
-
-    // Registro3
     private String fechaNacimiento;
-
-    // Registro4
-    private String fotoPerfilUrl;           // Imagen recortada (miniatura)
-    private String fotoPerfilCompletaUrl;     // Imagen completa original
-
-    // Registro6 (ejemplo: foto para publicaciones)
+    private String fotoPerfilUrl;
+    private String fotoPerfilCompletaUrl;
     private String fotoPublicacionUrl;
-
-    // Registro7
     private boolean guardarInformacion;
 
     // Constructor vacío (requerido para Firebase)
     public Usuario() {
     }
 
-    // Constructor completo (con todos los campos)
+    // Constructor completo
     public Usuario(String nombre, String apellido, String descripcion, String correo, String contrasena,
                    String fechaNacimiento, String fotoPerfilUrl, String fotoPerfilCompletaUrl,
                    String fotoPublicacionUrl, boolean guardarInformacion) {
@@ -48,6 +41,8 @@ public class Usuario implements Serializable {
         this.fotoPerfilCompletaUrl = fotoPerfilCompletaUrl;
         this.fotoPublicacionUrl = fotoPublicacionUrl;
         this.guardarInformacion = guardarInformacion;
+        this.emisorid = generateUniqueId(); // Asignar emisorId único
+        this.receptorid = generateUniqueId(); // Asignar receptorId único
     }
 
     // Constructor para Registro1 (solo 3 parámetros)
@@ -55,13 +50,20 @@ public class Usuario implements Serializable {
         this.nombre = nombre;
         this.apellido = apellido;
         this.descripcion = descripcion;
+        this.emisorid = generateUniqueId(); // Asignar emisorId único
+        this.receptorid = generateUniqueId(); // Asignar receptorId único
+    }
+
+    // Método para generar un ID único
+    private String generateUniqueId() {
+        return UUID.randomUUID().toString(); // Esto genera un ID único
     }
 
     // Getters y Setters
-
     public String getUserid() {
         return userid;
     }
+
     public void setUserid(String userid) {
         this.userid = userid;
     }
@@ -69,20 +71,23 @@ public class Usuario implements Serializable {
     public String getReceptorid() {
         return receptorid;
     }
-    public void setReceptorid(String receptorid) {
+
+    public void setReceptorId(String receptorid) {
         this.receptorid = receptorid;
     }
 
     public String getEmisorid() {
         return emisorid;
     }
-    public void setEmisorid(String emisorid) {
+
+    public void setEmisorId(String emisorid) {
         this.emisorid = emisorid;
     }
 
     public String getNombre() {
         return nombre;
     }
+
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
@@ -90,6 +95,7 @@ public class Usuario implements Serializable {
     public String getApellido() {
         return apellido;
     }
+
     public void setApellido(String apellido) {
         this.apellido = apellido;
     }
@@ -97,6 +103,7 @@ public class Usuario implements Serializable {
     public String getDescripcion() {
         return descripcion;
     }
+
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
@@ -104,6 +111,7 @@ public class Usuario implements Serializable {
     public String getCorreo() {
         return correo;
     }
+
     public void setCorreo(String correo) {
         this.correo = correo;
     }
@@ -111,6 +119,7 @@ public class Usuario implements Serializable {
     public String getContrasena() {
         return contrasena;
     }
+
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
     }
@@ -118,6 +127,7 @@ public class Usuario implements Serializable {
     public String getFechaNacimiento() {
         return fechaNacimiento;
     }
+
     public void setFechaNacimiento(String fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
@@ -125,6 +135,7 @@ public class Usuario implements Serializable {
     public String getFotoPerfilUrl() {
         return fotoPerfilUrl;
     }
+
     public void setFotoPerfilUrl(String fotoPerfilUrl) {
         this.fotoPerfilUrl = fotoPerfilUrl;
     }
@@ -132,6 +143,7 @@ public class Usuario implements Serializable {
     public String getFotoPerfilCompletaUrl() {
         return fotoPerfilCompletaUrl;
     }
+
     public void setFotoPerfilCompletaUrl(String fotoPerfilCompletaUrl) {
         this.fotoPerfilCompletaUrl = fotoPerfilCompletaUrl;
     }
@@ -139,6 +151,7 @@ public class Usuario implements Serializable {
     public String getFotoPublicacionUrl() {
         return fotoPublicacionUrl;
     }
+
     public void setFotoPublicacionUrl(String fotoPublicacionUrl) {
         this.fotoPublicacionUrl = fotoPublicacionUrl;
     }
@@ -146,7 +159,31 @@ public class Usuario implements Serializable {
     public boolean isGuardarInformacion() {
         return guardarInformacion;
     }
+
     public void setGuardarInformacion(boolean guardarInformacion) {
         this.guardarInformacion = guardarInformacion;
+    }
+
+    // Método para calcular la edad
+    public int calcularEdad() {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date fechaNac = dateFormat.parse(fechaNacimiento);
+            if (fechaNac == null) return 0;
+
+            Calendar nacimiento = Calendar.getInstance();
+            nacimiento.setTime(fechaNac);
+
+            Calendar hoy = Calendar.getInstance();
+
+            int edad = hoy.get(Calendar.YEAR) - nacimiento.get(Calendar.YEAR);
+
+            if (hoy.get(Calendar.DAY_OF_YEAR) < nacimiento.get(Calendar.DAY_OF_YEAR)) {
+                edad--;
+            }
+            return edad;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }

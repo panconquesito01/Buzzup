@@ -11,8 +11,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.MagicDevelopers.buzzup.HOME.HomeActivity;
 import com.MagicDevelopers.buzzup.LOGIN.Registro.Registro1Activity;
-import com.MagicDevelopers.buzzup.MainActivity;
 import com.MagicDevelopers.buzzup.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -21,7 +21,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.SignInButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthCredential;
@@ -50,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.loginButton);
         registerButton = findViewById(R.id.registerButton);
         googleSignInButton = findViewById(R.id.googleSignInButton);
+        TextView forgotPasswordText = findViewById(R.id.forgotPasswordText);
 
         // Configuración de Google Sign-In
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -78,6 +78,12 @@ public class LoginActivity extends AppCompatActivity {
         registerButton.setOnClickListener(v -> {
             Intent registerIntent = new Intent(LoginActivity.this, Registro1Activity.class);
             startActivity(registerIntent);
+        });
+
+        // Acción de "¿Olvidaste tu contraseña?" - Redirige a RecuperarContrasenaActivity
+        forgotPasswordText.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RecuperarContrasenaActivity.class);
+            startActivity(intent);
         });
 
         // Acción de inicio de sesión con Google
@@ -116,7 +122,7 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                        Intent mainIntent = new Intent(LoginActivity.this, HomeActivity.class);
                         startActivity(mainIntent);
                         finish();
                     } else {
@@ -158,7 +164,7 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                        Intent mainIntent = new Intent(LoginActivity.this, HomeActivity.class);
                         startActivity(mainIntent);
                         finish();
                     } else {

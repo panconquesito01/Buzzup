@@ -1,6 +1,7 @@
 package com.MagicDevelopers.buzzup.LOGIN.Registro;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -33,8 +34,14 @@ public class Registro2Activity extends AppCompatActivity {
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
         btnContinuar = findViewById(R.id.btnContinuar);
 
-        // Recibir el objeto Usuario desde Registro1Activity
-        usuario = (Usuario) getIntent().getSerializableExtra("usuario");
+        // Recuperar el objeto Usuario de SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("UsuarioPrefs", MODE_PRIVATE);
+        String nombre = sharedPreferences.getString("nombre", "");
+        String apellido = sharedPreferences.getString("apellido", "");
+        String descripcion = sharedPreferences.getString("descripcion", "");
+
+        // Crear el objeto Usuario con los datos recuperados
+        usuario = new Usuario(nombre, apellido, descripcion);
 
         // Configurar la imagen del logo según el modo oscuro/claro
         setLogoImage();

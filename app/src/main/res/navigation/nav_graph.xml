@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/homeFragment">
+
+    <!-- Definir el fragmento de inicio -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.MagicDevelopers.buzzup.HOME.Fragments.HomeFragment"
+        android:label="Home Fragment"
+        tools:layout="@layout/fragment_home" />
+
+    <!-- Definir otro fragmento -->
+    <fragment
+        android:id="@+id/NotificationsFragment"
+        android:name="com.MagicDevelopers.buzzup.HOME.Fragments.NotificationsFragment"
+        android:label="Details Fragment"
+        tools:layout="@layout/fragment_notifications" />
+    <fragment
+        android:id="@+id/ProfileFragment"
+        android:name="com.MagicDevelopers.buzzup.HOME.Fragments.ProfileFragment"
+        android:label="Details Fragment"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/UploadFragment"
+        android:name="com.MagicDevelopers.buzzup.HOME.Fragments.UploadFragment"
+        android:label="Details Fragment"
+        tools:layout="@layout/fragment_upload" />
+    <fragment
+        android:id="@+id/VideoFragment"
+        android:name="com.MagicDevelopers.buzzup.HOME.Fragments.VideoFragment"
+        android:label="Details Fragment"
+        tools:layout="@layout/fragment_video" />
+
+</navigation>

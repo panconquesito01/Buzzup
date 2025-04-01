@@ -27,18 +27,28 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.DocumentReference;
+
 public class Registro4Activity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int PERMISSION_REQUEST_CODE = 100;
 
     private CircleImageView ivProfile;
-    private MaterialButton btnSeleccionarFoto, btnContinuarRegistro4;
+    private MaterialButton btnSeleccionarFoto, btnContinuarRegistro4, btnAhoraNo;
     private UsuarioController usuarioController;
     private String userId; // Puede ser nulo en un flujo acumulativo
     private Usuario usuario;
     private Uri originalImageUri = null;   // Imagen original completa
     private Uri croppedImageUri = null;      // Imagen recortada (miniatura)
+
+    // Firebase
+    private FirebaseStorage firebaseStorage;
+    private FirebaseFirestore firebaseFirestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +59,12 @@ public class Registro4Activity extends AppCompatActivity {
         ivProfile = findViewById(R.id.ivProfile);
         btnSeleccionarFoto = findViewById(R.id.btnSeleccionarFoto);
         btnContinuarRegistro4 = findViewById(R.id.btnContinuarRegistro4);
+        btnAhoraNo = findViewById(R.id.btnAhoraNo);  // Nuevo botón para "Ahora no"
 
-        // Inicializar el controlador
+        // Inicializar el controlador y Firebase
         usuarioController = new UsuarioController();
+        firebaseStorage = FirebaseStorage.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         // Recibir el objeto Usuario y userId (puede ser null) desde la actividad anterior
         userId = getIntent().getStringExtra("userId");
@@ -76,34 +89,20 @@ public class Registro4Activity extends AppCompatActivity {
             }
         });
 
-        // Al continuar, comprobamos que se hayan seleccionado ambas URIs (original y recortada)
-        btnContinuarRegistro4.setOnClickListener(v -> {
-            if (originalImageUri == null || croppedImageUri == null) {
-                Toast.makeText(Registro4Activity.this, "Debes seleccionar y recortar una imagen", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Actualizar el objeto Usuario con ambas URIs
-            usuario.setFotoPerfilUrl(croppedImageUri.toString());
-            usuario.setFotoPerfilCompletaUrl(originalImageUri.toString());
+        // Al pulsar el botón "Ahora no", continuar sin seleccionar la imagen
+        btnAhoraNo.setOnClickListener(v -> {
+            // Continuar sin foto de perfil
+            usuario.setFotoPerfilUrl("");  // Foto de perfil vacía
+            usuario.setFotoPerfilCompletaUrl("");  // Foto de perfil completa vacía
 
             // Crear mapa con los datos a actualizar
             Map<String, Object> datosRegistro4 = new HashMap<>();
-            datosRegistro4.put("fotoPerfilUrl", croppedImageUri.toString());
-            datosRegistro4.put("fotoPerfilCompletaUrl", originalImageUri.toString());
+            datosRegistro4.put("fotoPerfilUrl", "");
+            datosRegistro4.put("fotoPerfilCompletaUrl", "");
 
             // Si userId no es nulo, actualizamos en Firebase; de lo contrario, simplemente avanzamos
             if (userId != null) {
-                usuarioController.actualizarUsuario(userId, datosRegistro4, exito -> {
-                    if (exito) {
-                        Intent intent = new Intent(Registro4Activity.this, Registro5Activity.class);
-                        intent.putExtra("userId", userId);
-                        intent.putExtra("usuario", usuario);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(Registro4Activity.this, "Error al actualizar la foto de perfil", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                actualizarUsuarioEnFirebase(datosRegistro4);
             } else {
                 // Si userId es nulo, simplemente pasamos el objeto Usuario actualizado al siguiente paso
                 Intent intent = new Intent(Registro4Activity.this, Registro5Activity.class);
@@ -111,6 +110,70 @@ public class Registro4Activity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // Al continuar, comprobamos que se hayan seleccionado ambas URIs (original y recortada)
+        btnContinuarRegistro4.setOnClickListener(v -> {
+            if (originalImageUri == null || croppedImageUri == null) {
+                Toast.makeText(Registro4Activity.this, "Debes seleccionar y recortar una imagen", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Subir la imagen a Firebase y obtener la URL
+            uploadImageToFirebase(originalImageUri, croppedImageUri);
+        });
+    }
+
+    private void uploadImageToFirebase(Uri originalImageUri, Uri croppedImageUri) {
+        // Subir la imagen original a Firebase Storage
+        StorageReference originalImageRef = firebaseStorage.getReference().child("profile_images").child(userId + "_original.jpg");
+        originalImageRef.putFile(originalImageUri)
+                .addOnSuccessListener(taskSnapshot -> originalImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    String originalImageUrl = uri.toString();
+
+                    // Subir la imagen recortada a Firebase Storage
+                    StorageReference croppedImageRef = firebaseStorage.getReference().child("profile_images").child(userId + "_cropped.jpg");
+                    croppedImageRef.putFile(croppedImageUri)
+                            .addOnSuccessListener(taskSnapshot2 -> croppedImageRef.getDownloadUrl().addOnSuccessListener(uri2 -> {
+                                String croppedImageUrl = uri2.toString();
+
+                                // Agregar emisorId y receptorId al mapa de datos
+                                String emisorId = userId;  // Asignamos emisorId al usuario actual
+                                String receptorId = "otro_usuario_id";  // Aquí puedes obtener el receptorId según tu lógica
+
+                                // Actualizar el objeto Usuario con las URLs y los IDs
+                                usuario.setFotoPerfilUrl(croppedImageUrl);
+                                usuario.setFotoPerfilCompletaUrl(originalImageUrl);
+                                usuario.setEmisorId(emisorId);
+                                usuario.setReceptorId(receptorId);
+
+                                // Crear mapa con los datos a actualizar
+                                Map<String, Object> datosRegistro4 = new HashMap<>();
+                                datosRegistro4.put("fotoPerfilUrl", croppedImageUrl);
+                                datosRegistro4.put("fotoPerfilCompletaUrl", originalImageUrl);
+                                datosRegistro4.put("emisorId", emisorId);
+                                datosRegistro4.put("receptorId", receptorId);
+
+                                // Actualizar los datos del usuario en Firestore
+                                if (userId != null) {
+                                    actualizarUsuarioEnFirebase(datosRegistro4);
+                                }
+                            }))
+                            .addOnFailureListener(e -> Toast.makeText(Registro4Activity.this, "Error al subir la imagen recortada", Toast.LENGTH_SHORT).show());
+                }))
+                .addOnFailureListener(e -> Toast.makeText(Registro4Activity.this, "Error al subir la imagen original", Toast.LENGTH_SHORT).show());
+    }
+
+    private void actualizarUsuarioEnFirebase(Map<String, Object> datosRegistro4) {
+        // Actualizamos los datos en Firestore
+        DocumentReference usuarioRef = firebaseFirestore.collection("usuarios").document(userId);
+        usuarioRef.update(datosRegistro4)
+                .addOnSuccessListener(aVoid -> {
+                    Intent intent = new Intent(Registro4Activity.this, Registro5Activity.class);
+                    intent.putExtra("userId", userId);
+                    intent.putExtra("usuario", usuario);
+                    startActivity(intent);
+                })
+                .addOnFailureListener(e -> Toast.makeText(Registro4Activity.this, "Error al actualizar los datos en Firebase", Toast.LENGTH_SHORT).show());
     }
 
     // Método para abrir el selector de imágenes
@@ -140,26 +203,23 @@ public class Registro4Activity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            // Guardar la URI original de la imagen seleccionada
-            originalImageUri = data.getData();
-            // Crear una URI destino para la imagen recortada en el directorio de caché
-            Uri destinationUri = Uri.fromFile(new File(getCacheDir(), "cropped_" + System.currentTimeMillis() + ".jpg"));
-            // Iniciar UCrop para recortar la imagen (aspecto 1:1, tamaño máximo 500x500)
-            UCrop.of(originalImageUri, destinationUri)
-                    .withAspectRatio(1, 1)
-                    .withMaxResultSize(500, 500)
-                    .start(Registro4Activity.this);
-        } else if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
-            // Obtener la imagen recortada de UCrop
+            // Obtener URI de la imagen seleccionada
+            Uri imageUri = data.getData();
+            if (imageUri != null) {
+                // Recortar la imagen
+                UCrop.of(imageUri, Uri.fromFile(new File(getCacheDir(), "cropped_image.jpg")))
+                        .withAspectRatio(1, 1)
+                        .start(Registro4Activity.this);
+            }
+        }
+
+        if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK && data != null) {
+            // Obtener URI de la imagen recortada
             Uri resultUri = UCrop.getOutput(data);
             if (resultUri != null) {
                 croppedImageUri = resultUri;
-                // Mostrar la imagen recortada en el CircleImageView
                 ivProfile.setImageURI(croppedImageUri);
             }
-        } else if (requestCode == UCrop.REQUEST_CROP && resultCode == UCrop.RESULT_ERROR) {
-            final Throwable cropError = UCrop.getError(data);
-            Toast.makeText(this, "Error en el recorte: " + cropError.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 }

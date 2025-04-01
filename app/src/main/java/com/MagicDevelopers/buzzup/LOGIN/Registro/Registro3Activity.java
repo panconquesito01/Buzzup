@@ -68,6 +68,7 @@ public class Registro3Activity extends AppCompatActivity {
             datePickerDialog.show();
         });
 
+        // Acción al hacer clic en el botón de continuar
         btnContinuarRegistro3.setOnClickListener(v -> {
             if (etFechaNacimiento.getText().toString().trim().isEmpty()) {
                 Toast.makeText(Registro3Activity.this, "Debes seleccionar tu fecha de nacimiento", Toast.LENGTH_SHORT).show();
@@ -83,11 +84,13 @@ public class Registro3Activity extends AppCompatActivity {
                 datosRegistro3.put("fechaNacimiento", selectedDate);
                 usuarioController.actualizarUsuario(userId, datosRegistro3, exito -> {
                     if (exito) {
+                        // Si la actualización fue exitosa, pasa al siguiente paso (Registro4Activity)
                         Intent intent = new Intent(Registro3Activity.this, Registro4Activity.class);
                         intent.putExtra("userId", userId);
                         intent.putExtra("usuario", usuario);
                         startActivity(intent);
                     } else {
+                        // Si hubo un error al actualizar, mostrar un mensaje
                         Toast.makeText(Registro3Activity.this, "Error al actualizar la fecha de nacimiento", Toast.LENGTH_SHORT).show();
                     }
                 });

@@ -80,6 +80,20 @@
             android:backgroundTint="?attr/colorControlNormal"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Botón de "Olvidé mi contraseña" -->
+    <TextView
+        android:id="@+id/forgotPasswordText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:text="¿Olvidaste tu contraseña?"
+    android:textColor="@android:color/holo_blue_dark"
+    android:textSize="15sp"
+    app:layout_constraintStart_toStartOf="@id/passwordLayout"
+    app:layout_constraintTop_toBottomOf="@id/passwordLayout"
+    android:layout_marginTop="1dp"/>
+
     <!-- Botón de inicio de sesión -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/loginButton"
@@ -95,7 +109,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginHorizontal="30dp"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="25dp"/>
 
     <!-- Botón de registrarse -->
     <com.google.android.material.button.MaterialButton
