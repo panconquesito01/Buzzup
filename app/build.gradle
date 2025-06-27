@@ -29,6 +29,16 @@ android {
     }
 }
 
+    android.applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def appName = "BuzzUp"
+            def buildType = variant.buildType.name
+            def versionName = variant.versionName
+
+            outputFileName = "${appName}-v${versionName}.apk"
+    }
+}
+
 dependencies {
 
     implementation libs.appcompat
@@ -58,7 +68,6 @@ dependencies {
     implementation 'com.burhanrashid52:photoeditor:3.0.2'
     implementation 'com.github.yalantis:ucrop:2.2.10'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-    implementation 'com.google.android.material:material:1.8.0'
 
     implementation "androidx.navigation:navigation-fragment-ktx:2.7.7"
     implementation "androidx.navigation:navigation-ui-ktx:2.7.7"

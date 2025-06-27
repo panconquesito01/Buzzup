@@ -18,6 +18,7 @@ public class Usuario implements Serializable {
     private String correo;
     private String contrasena;
     private String fechaNacimiento;
+    private String telefono; // NUEVO CAMPO
     private String fotoPerfilUrl;
     private String fotoPerfilCompletaUrl;
     private String fotoPublicacionUrl;
@@ -29,7 +30,7 @@ public class Usuario implements Serializable {
 
     // Constructor completo
     public Usuario(String nombre, String apellido, String descripcion, String correo, String contrasena,
-                   String fechaNacimiento, String fotoPerfilUrl, String fotoPerfilCompletaUrl,
+                   String fechaNacimiento, String telefono, String fotoPerfilUrl, String fotoPerfilCompletaUrl,
                    String fotoPublicacionUrl, boolean guardarInformacion) {
         this.nombre = nombre;
         this.apellido = apellido;
@@ -37,12 +38,13 @@ public class Usuario implements Serializable {
         this.correo = correo;
         this.contrasena = contrasena;
         this.fechaNacimiento = fechaNacimiento;
+        this.telefono = telefono;
         this.fotoPerfilUrl = fotoPerfilUrl;
         this.fotoPerfilCompletaUrl = fotoPerfilCompletaUrl;
         this.fotoPublicacionUrl = fotoPublicacionUrl;
         this.guardarInformacion = guardarInformacion;
-        this.emisorid = generateUniqueId(); // Asignar emisorId único
-        this.receptorid = generateUniqueId(); // Asignar receptorId único
+        this.emisorid = generateUniqueId();
+        this.receptorid = generateUniqueId();
     }
 
     // Constructor para Registro1 (solo 3 parámetros)
@@ -50,16 +52,17 @@ public class Usuario implements Serializable {
         this.nombre = nombre;
         this.apellido = apellido;
         this.descripcion = descripcion;
-        this.emisorid = generateUniqueId(); // Asignar emisorId único
-        this.receptorid = generateUniqueId(); // Asignar receptorId único
+        this.emisorid = generateUniqueId();
+        this.receptorid = generateUniqueId();
     }
 
     // Método para generar un ID único
     private String generateUniqueId() {
-        return UUID.randomUUID().toString(); // Esto genera un ID único
+        return UUID.randomUUID().toString();
     }
 
     // Getters y Setters
+
     public String getUserid() {
         return userid;
     }
@@ -132,6 +135,14 @@ public class Usuario implements Serializable {
         this.fechaNacimiento = fechaNacimiento;
     }
 
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
     public String getFotoPerfilUrl() {
         return fotoPerfilUrl;
     }
@@ -164,7 +175,7 @@ public class Usuario implements Serializable {
         this.guardarInformacion = guardarInformacion;
     }
 
-    // Método para calcular la edad
+    //Metodo para calcular la edad
     public int calcularEdad() {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());

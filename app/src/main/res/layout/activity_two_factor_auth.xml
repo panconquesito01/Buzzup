@@ -32,12 +32,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"/>
 
-    <!-- Texto amigable descriptivo -->
+    <!-- Descripción -->
     <TextView
         android:id="@+id/descText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Hemos enviado un código de 6 dígitos a tu correo. Ingresa el código en las casillas para continuar."
+        android:text="Hemos enviado un código de 6 dígitos por SMS."
         android:textSize="14sp"
         android:textColor="?attr/colorOnBackground"
         android:gravity="center"
@@ -47,7 +47,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"/>
 
-    <!-- Contenedor para los dígitos OTP -->
+    <!-- Contenedor de OTP -->
     <LinearLayout
         android:id="@+id/otpContainer"
         android:layout_width="wrap_content"
@@ -130,7 +130,20 @@
             android:imeOptions="actionDone"/>
     </LinearLayout>
 
-    <!-- Botón para verificar OTP -->
+    <!-- Temporizador -->
+    <TextView
+        android:id="@+id/textTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="El código expirará en 2:00"
+        android:textSize="14sp"
+        android:textColor="?attr/colorOnBackground"
+        app:layout_constraintTop_toBottomOf="@id/otpContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Botón Verificar -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/verifyButton"
         android:layout_width="0dp"
@@ -139,8 +152,40 @@
         app:cornerRadius="16dp"
         android:backgroundTint="?attr/colorPrimary"
         android:layout_marginHorizontal="30dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/otpContainer"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/textTimer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Texto: Enviar por correo -->
+    <TextView
+        android:id="@+id/textSendEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enviar código por correo"
+        android:textColor="@color/purple_500"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintTop_toBottomOf="@id/verifyButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Texto: Enviar por SMS -->
+    <TextView
+        android:id="@+id/textSendSms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enviar código por SMS"
+        android:textColor="@color/purple_500"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintTop_toBottomOf="@id/textSendEmail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -25,6 +25,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -122,9 +123,41 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        Intent mainIntent = new Intent(LoginActivity.this, HomeActivity.class);
-                        startActivity(mainIntent);
-                        finish();
+                        // Obtener el UID
+                        String uid = mAuth.getCurrentUser().getUid();
+
+                        // Recuperar el campo telefono en Firestore
+                        FirebaseFirestore.getInstance().collection("usuarios")
+                                .document(uid)
+                                .get()
+                                .addOnSuccessListener(documentSnapshot -> {
+                                    if (documentSnapshot.exists()) {
+                                        String telefono = documentSnapshot.getString("telefono");
+
+                                        if (telefono == null || telefono.isEmpty()) {
+                                            // No hay teléfono: ir directo al Home
+                                            Intent mainIntent = new Intent(LoginActivity.this, HomeActivity.class);
+                                            startActivity(mainIntent);
+                                            finish();
+                                        } else {
+                                            // Hay teléfono: ir al 2FA
+                                            Intent intent = new Intent(LoginActivity.this, TwoFactorAuthActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                    } else {
+                                        // Si no hay documento, asumir sin teléfono
+                                        Intent mainIntent = new Intent(LoginActivity.this, HomeActivity.class);
+                                        startActivity(mainIntent);
+                                        finish();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    // En caso de error al consultar Firestore, asumir sin teléfono
+                                    Intent mainIntent = new Intent(LoginActivity.this, HomeActivity.class);
+                                    startActivity(mainIntent);
+                                    finish();
+                                });
                     } else {
                         Toast.makeText(LoginActivity.this, "Error de autenticación", Toast.LENGTH_SHORT).show();
                     }
@@ -132,8 +165,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signInWithGoogle() {
-        Intent signInIntent = googleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        googleSignInClient.revokeAccess().addOnCompleteListener(task -> {
+            Intent signInIntent = googleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        });
     }
 
     @Override
