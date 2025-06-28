@@ -4,15 +4,29 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.MagicDevelopers.buzzup.HOME.HomeActivity;
+import com.MagicDevelopers.buzzup.Modelos.Usuario;
 import com.MagicDevelopers.buzzup.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Registro5Activity extends AppCompatActivity {
 
@@ -20,72 +34,185 @@ public class Registro5Activity extends AppCompatActivity {
     private ImageView logoImage;
     private TextView titleText, descText;
 
+    private Usuario usuario;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore firestoreDb;
+    private DatabaseReference realtimeDbRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro5);
 
-        // Referenciar vistas
-        logoImage = findViewById(R.id.logoImage);
-        titleText = findViewById(R.id.titleText);
-        descText = findViewById(R.id.descText);
+        logoImage       = findViewById(R.id.logoImage);
+        titleText       = findViewById(R.id.titleText);
+        descText        = findViewById(R.id.descText);
         btnGuardarAhora = findViewById(R.id.btnGuardarAhora);
-        btnAhoraNo = findViewById(R.id.btnAhoraNo);
+        btnAhoraNo      = findViewById(R.id.btnAhoraNo);
 
-        // Ajustar colores y logo según el modo oscuro/claro
         setLogoAndTextColors();
 
-        // Botón "Guardar Ahora"
-        btnGuardarAhora.setOnClickListener(v -> {
-            guardarPreferencia(true);
-            irAMainActivity();
-        });
+        mAuth = FirebaseAuth.getInstance();
+        firestoreDb = FirebaseFirestore.getInstance();
+        realtimeDbRef = FirebaseDatabase.getInstance().getReference("usuarios");
 
-        // Botón "Ahora No"
-        btnAhoraNo.setOnClickListener(v -> {
-            guardarPreferencia(false);
-            irAMainActivity();
-        });
+        usuario = (Usuario) getIntent().getSerializableExtra("usuario");
+
+        if (usuario == null) {
+            Toast.makeText(this, "Error: datos de usuario no disponibles.", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
+        btnGuardarAhora.setOnClickListener(v -> crearUsuarioFirebase(true));
+        btnAhoraNo.setOnClickListener(v -> crearUsuarioFirebase(false));
     }
 
-    private void guardarPreferencia(boolean mantenerSesion) {
-        SharedPreferences preferences = getSharedPreferences("USER_PREFS", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean("mantenerSesion", mantenerSesion);
-        editor.apply();
+    private void crearUsuarioFirebase(boolean mantenerSesion) {
+        mAuth.createUserWithEmailAndPassword(usuario.getCorreo(), usuario.getContrasena())
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                        if (firebaseUser != null) {
+                            String uid = firebaseUser.getUid();
+                            usuario.setUserid(uid);
+
+                            // Si hay imagen seleccionada
+                            if (usuario.getFotoPerfilUrl() != null && !usuario.getFotoPerfilUrl().isEmpty()) {
+                                Uri localUri = Uri.parse(usuario.getFotoPerfilUrl());
+                                StorageReference refCropped = FirebaseStorage.getInstance().getReference()
+                                        .child("profile_images").child(uid).child("profile.jpg");
+
+                                refCropped.putFile(localUri)
+                                        .continueWithTask(t -> {
+                                            if (!t.isSuccessful()) {
+                                                throw t.getException();
+                                            }
+                                            return refCropped.getDownloadUrl();
+                                        })
+                                        .addOnSuccessListener(downloadUri -> {
+                                            usuario.setFotoPerfilUrl(downloadUri.toString());
+                                            usuario.setFotoPerfilCompletaUrl(downloadUri.toString());
+                                            actualizarPerfilFirebase(firebaseUser, downloadUri, uid, mantenerSesion);
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Toast.makeText(this, "Error al subir la imagen: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                            actualizarPerfilFirebase(firebaseUser, null, uid, mantenerSesion);
+                                        });
+                            } else {
+                                actualizarPerfilFirebase(firebaseUser, null, uid, mantenerSesion);
+                            }
+                        } else {
+                            Toast.makeText(this, "Error al obtener usuario Firebase.", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(this, "Error al crear usuario: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
-    private void irAMainActivity() {
-        Intent intent = new Intent(Registro5Activity.this, HomeActivity.class);
+    private void actualizarPerfilFirebase(FirebaseUser firebaseUser, Uri photoUri, String uid, boolean mantenerSesion) {
+        UserProfileChangeRequest.Builder builder = new UserProfileChangeRequest.Builder()
+                .setDisplayName(usuario.getNombre() + " " + usuario.getApellido());
+
+        if (photoUri != null) {
+            builder.setPhotoUri(photoUri);
+        }
+
+        firebaseUser.updateProfile(builder.build())
+                .addOnCompleteListener(profileTask -> {
+                    guardarUsuarioEnFirestore(uid, mantenerSesion);
+                    guardarUsuarioEnRealtimeDatabase(uid);
+                });
+    }
+
+    private void guardarUsuarioEnFirestore(String uid, boolean mantenerSesion) {
+        Map<String, Object> usuarioMap = new HashMap<>();
+        usuarioMap.put("userid", usuario.getUserid());
+        usuarioMap.put("nombre", usuario.getNombre());
+        usuarioMap.put("apellido", usuario.getApellido());
+        usuarioMap.put("descripcion", usuario.getDescripcion());
+        usuarioMap.put("correo", usuario.getCorreo());
+        usuarioMap.put("fechaNacimiento", usuario.getFechaNacimiento());
+        usuarioMap.put("fotoPerfilUrl", usuario.getFotoPerfilUrl() != null ? usuario.getFotoPerfilUrl() : "");
+        usuarioMap.put("fotoPerfilCompletaUrl", usuario.getFotoPerfilCompletaUrl() != null ? usuario.getFotoPerfilCompletaUrl() : "");
+        usuarioMap.put("fotoPublicacionUrl", usuario.getFotoPublicacionUrl() != null ? usuario.getFotoPublicacionUrl() : "");
+        usuarioMap.put("guardarInformacion", mantenerSesion);
+        usuarioMap.put("emisorid", usuario.getEmisorid());
+        usuarioMap.put("receptorid", usuario.getReceptorid());
+        usuarioMap.put("telefono", ""); // Campo vacío por defecto
+
+        firestoreDb.collection("usuarios").document(uid)
+                .set(usuarioMap)
+                .addOnSuccessListener(aVoid -> {
+                    guardarPreferenciaLocal(mantenerSesion);
+                    if (!mantenerSesion) {
+                        mAuth.signOut();
+                    }
+                    Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show();
+                    irHome();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al guardar usuario: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
+    private void guardarUsuarioEnRealtimeDatabase(String uid) {
+        Map<String, Object> usuarioMap = new HashMap<>();
+        usuarioMap.put("userid", usuario.getUserid());
+        usuarioMap.put("nombre", usuario.getNombre());
+        usuarioMap.put("apellido", usuario.getApellido());
+        usuarioMap.put("descripcion", usuario.getDescripcion());
+        usuarioMap.put("correo", usuario.getCorreo());
+        usuarioMap.put("fechaNacimiento", usuario.getFechaNacimiento());
+        usuarioMap.put("fotoPerfilUrl", usuario.getFotoPerfilUrl() != null ? usuario.getFotoPerfilUrl() : "");
+        usuarioMap.put("fotoPerfilCompletaUrl", usuario.getFotoPerfilCompletaUrl() != null ? usuario.getFotoPerfilCompletaUrl() : "");
+        usuarioMap.put("fotoPublicacionUrl", usuario.getFotoPublicacionUrl() != null ? usuario.getFotoPublicacionUrl() : "");
+        usuarioMap.put("guardarInformacion", usuario.isGuardarInformacion());
+        usuarioMap.put("emisorid", usuario.getEmisorid());
+        usuarioMap.put("receptorid", usuario.getReceptorid());
+        usuarioMap.put("telefono", ""); // Campo vacío por defecto
+
+        realtimeDbRef.child(uid).setValue(usuarioMap)
+                .addOnSuccessListener(aVoid -> {
+                    // Guardado exitoso
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error guardando en Realtime DB: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
+    private void guardarPreferenciaLocal(boolean mantenerSesion) {
+        SharedPreferences pref = getSharedPreferences("USER_PREFS", MODE_PRIVATE);
+        pref.edit().putBoolean("mantenerSesion", mantenerSesion).apply();
+    }
+
+    private void irHome() {
+        Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
-        finish();
+        finishAffinity();
     }
 
-    /**
-     * Ajusta el logo y los colores del texto según el modo oscuro o claro.
-     */
     private void setLogoAndTextColors() {
-        boolean isDarkMode = (getResources().getConfiguration().uiMode &
+        boolean dark = (getResources().getConfiguration().uiMode &
                 Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
 
-        if (isDarkMode) {
-            // Modo oscuro: color blanco para el texto y logo oscuro
-            logoImage.setImageResource(R.drawable.logo_dark);  // Cambiar al logo oscuro
-            titleText.setTextColor(Color.WHITE);  // Texto en blanco en modo oscuro
-            descText.setTextColor(Color.WHITE);  // Descripción en blanco en modo oscuro
-            btnGuardarAhora.setTextColor(Color.BLACK);  // Texto del botón en negro
-            btnAhoraNo.setTextColor(Color.BLACK);  // Texto del botón en negro
-            btnGuardarAhora.setBackgroundColor(Color.WHITE);  // Fondo blanco para el botón
-            btnAhoraNo.setBackgroundColor(Color.WHITE);  // Fondo blanco para el botón
+        if (dark) {
+            logoImage.setImageResource(R.drawable.logo_dark);
+            titleText.setTextColor(Color.WHITE);
+            descText.setTextColor(Color.WHITE);
+            btnGuardarAhora.setTextColor(Color.BLACK);
+            btnAhoraNo.setTextColor(Color.BLACK);
+            btnGuardarAhora.setBackgroundColor(Color.WHITE);
+            btnAhoraNo.setBackgroundColor(Color.WHITE);
         } else {
-            // Modo claro: color negro para el texto y logo claro
-            logoImage.setImageResource(R.drawable.logo_light);  // Cambiar al logo claro
-            titleText.setTextColor(Color.BLACK);  // Texto en negro en modo claro
-            descText.setTextColor(Color.BLACK);  // Descripción en negro en modo claro
-            btnGuardarAhora.setTextColor(Color.WHITE);  // Texto del botón en blanco
-            btnAhoraNo.setTextColor(Color.WHITE);  // Texto del botón en blanco
-            btnGuardarAhora.setBackgroundColor(Color.BLACK);  // Fondo negro para el botón
-            btnAhoraNo.setBackgroundColor(Color.BLACK);  // Fondo negro para el botón
+            logoImage.setImageResource(R.drawable.logo_light);
+            titleText.setTextColor(Color.BLACK);
+            descText.setTextColor(Color.BLACK);
+            btnGuardarAhora.setTextColor(Color.WHITE);
+            btnAhoraNo.setTextColor(Color.WHITE);
+            btnGuardarAhora.setBackgroundColor(Color.BLACK);
+            btnAhoraNo.setBackgroundColor(Color.BLACK);
         }
     }
 }

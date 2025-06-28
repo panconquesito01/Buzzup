@@ -1,7 +1,6 @@
 package com.MagicDevelopers.buzzup.LOGIN.Registro;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -37,42 +36,31 @@ public class Registro1Activity extends AppCompatActivity {
         etDescripcion = findViewById(R.id.etDescripcion);
         btnSiguiente = findViewById(R.id.btnSiguiente);
 
-        // Ajustar la interfaz según el modo oscuro/claro
+        // Ajustar interfaz para modo oscuro/claro
         setUIColors();
 
-        // Acción del botón "Continuar"
+        // Acción al presionar "Continuar"
         btnSiguiente.setOnClickListener(v -> {
             String nombre = etNombre.getText().toString().trim();
             String apellido = etApellido.getText().toString().trim();
             String descripcion = etDescripcion.getText().toString().trim();
 
-            // Validar campos obligatorios
+            // Validación básica
             if (nombre.isEmpty() || apellido.isEmpty()) {
-                Toast.makeText(Registro1Activity.this, "Nombre y Apellido son obligatorios", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Nombre y Apellido son obligatorios", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Crear el objeto Usuario con los datos de Registro1 usando el constructor de 3 parámetros
+            // Crear objeto Usuario con solo los datos de esta pantalla
             Usuario usuario = new Usuario(nombre, apellido, descripcion);
 
-            // Guardar los datos localmente en SharedPreferences
-            SharedPreferences sharedPreferences = getSharedPreferences("UsuarioPrefs", MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("nombre", usuario.getNombre());
-            editor.putString("apellido", usuario.getApellido());
-            editor.putString("descripcion", usuario.getDescripcion());
-            editor.apply();
-
-            // Pasar el objeto Usuario a la siguiente Activity (Registro2Activity)
-            Intent intent = new Intent(Registro1Activity.this, Registro2Activity.class);
+            // Pasar al Registro2Activity
+            Intent intent = new Intent(this, Registro2Activity.class);
             intent.putExtra("usuario", usuario);
             startActivity(intent);
         });
     }
 
-    /**
-     * Ajusta el logo y los textos según el modo oscuro o claro.
-     */
     private void setUIColors() {
         boolean isDarkMode = (getResources().getConfiguration().uiMode &
                 Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
