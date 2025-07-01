@@ -24,6 +24,12 @@
     <color name="lightGray">#D3D3D3</color>
     <color name="hintColor">#757575</color> <!-- Un tono gris claro común para los hints -->
 
+    <color name="backgroundOverlayGradient">#80000000</color>
+    <color name="background_dynamic">#FFFFFF</color>
+
+    <color name="background_light">#FFFFFF</color>
+    <color name="background_dark">#121212</color>
 
 
 </resources>
+
