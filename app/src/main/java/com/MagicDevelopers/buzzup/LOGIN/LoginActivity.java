@@ -1,6 +1,7 @@
 package com.MagicDevelopers.buzzup.LOGIN;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -59,10 +60,10 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
 
-        // Ajustar colores del logo, textos y botones según el tema
+        // Ajustar colores según tema
         setLogoAndTextColors();
 
-        // Acción de inicio de sesión con correo
+        // Login con correo
         loginButton.setOnClickListener(v -> {
             String email = emailInput.getText().toString().trim();
             String password = passwordInput.getText().toString().trim();
@@ -75,19 +76,19 @@ public class LoginActivity extends AppCompatActivity {
             loginWithEmailPassword(email, password);
         });
 
-        // Acción de registro
+        // Registro
         registerButton.setOnClickListener(v -> {
             Intent registerIntent = new Intent(LoginActivity.this, Registro1Activity.class);
             startActivity(registerIntent);
         });
 
-        // Acción de "¿Olvidaste tu contraseña?" - Redirige a RecuperarContrasenaActivity
+        // Recuperar contraseña
         forgotPasswordText.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, RecuperarContrasenaActivity.class);
             startActivity(intent);
         });
 
-        // Acción de inicio de sesión con Google
+        // Login con Google
         googleSignInButton.setOnClickListener(v -> signInWithGoogle());
     }
 
@@ -95,9 +96,6 @@ public class LoginActivity extends AppCompatActivity {
         ImageView logoImage = findViewById(R.id.logoImage);
         TextView titleText = findViewById(R.id.titleText);
         TextView infoText = findViewById(R.id.infoText);
-        // Se obtienen también los botones para actualizar su color
-        MaterialButton loginButton = findViewById(R.id.loginButton);
-        MaterialButton registerButton = findViewById(R.id.registerButton);
 
         boolean isDarkMode = (getResources().getConfiguration().uiMode &
                 Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
@@ -106,14 +104,12 @@ public class LoginActivity extends AppCompatActivity {
             logoImage.setImageResource(R.drawable.logo_dark);
             titleText.setTextColor(ContextCompat.getColor(this, android.R.color.white));
             infoText.setTextColor(ContextCompat.getColor(this, android.R.color.white));
-            // En modo oscuro, los botones tendrán el texto en negro
             loginButton.setTextColor(Color.BLACK);
             registerButton.setTextColor(Color.BLACK);
         } else {
             logoImage.setImageResource(R.drawable.logo_light);
             titleText.setTextColor(ContextCompat.getColor(this, android.R.color.black));
             infoText.setTextColor(ContextCompat.getColor(this, android.R.color.black));
-            // En modo claro, los botones tendrán el texto en blanco
             loginButton.setTextColor(Color.WHITE);
             registerButton.setTextColor(Color.WHITE);
         }
@@ -123,10 +119,8 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        // Obtener el UID
                         String uid = mAuth.getCurrentUser().getUid();
 
-                        // Recuperar el campo telefono en Firestore
                         FirebaseFirestore.getInstance().collection("usuarios")
                                 .document(uid)
                                 .get()
@@ -135,28 +129,20 @@ public class LoginActivity extends AppCompatActivity {
                                         String telefono = documentSnapshot.getString("telefono");
 
                                         if (telefono == null || telefono.isEmpty()) {
-                                            // No hay teléfono: ir directo al Home
-                                            Intent mainIntent = new Intent(LoginActivity.this, HomeActivity.class);
-                                            startActivity(mainIntent);
-                                            finish();
+                                            guardarMantenerSesion();
+                                            irAHome();
                                         } else {
-                                            // Hay teléfono: ir al 2FA
-                                            Intent intent = new Intent(LoginActivity.this, TwoFactorAuthActivity.class);
-                                            startActivity(intent);
-                                            finish();
+                                            guardarMantenerSesion();
+                                            irADosFA();
                                         }
                                     } else {
-                                        // Si no hay documento, asumir sin teléfono
-                                        Intent mainIntent = new Intent(LoginActivity.this, HomeActivity.class);
-                                        startActivity(mainIntent);
-                                        finish();
+                                        guardarMantenerSesion();
+                                        irAHome();
                                     }
                                 })
                                 .addOnFailureListener(e -> {
-                                    // En caso de error al consultar Firestore, asumir sin teléfono
-                                    Intent mainIntent = new Intent(LoginActivity.this, HomeActivity.class);
-                                    startActivity(mainIntent);
-                                    finish();
+                                    guardarMantenerSesion();
+                                    irAHome();
                                 });
                     } else {
                         Toast.makeText(LoginActivity.this, "Error de autenticación", Toast.LENGTH_SHORT).show();
@@ -199,12 +185,38 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        Intent mainIntent = new Intent(LoginActivity.this, HomeActivity.class);
-                        startActivity(mainIntent);
-                        finish();
+                        guardarMantenerSesion();
+                        irAHome();
                     } else {
                         Toast.makeText(LoginActivity.this, "Error al autenticar con Google", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+
+     //Guarda en SharedPreferences que el usuario quiere mantener la sesión iniciada.
+
+    private void guardarMantenerSesion() {
+        SharedPreferences prefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("mantenerSesion", true);
+        editor.apply();
+    }
+
+
+     // Lanza la actividad principal.
+
+    private void irAHome() {
+        Intent mainIntent = new Intent(LoginActivity.this, HomeActivity.class);
+        startActivity(mainIntent);
+        finish();
+    }
+
+     //Lanza la actividad de autenticación de dos factores.
+
+    private void irADosFA() {
+        Intent intent = new Intent(LoginActivity.this, TwoFactorAuthActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

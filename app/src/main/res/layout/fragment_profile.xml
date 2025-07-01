@@ -22,10 +22,10 @@
     <!-- Botón Configuración -->
     <ImageButton
         android:id="@+id/btnSettings"
-        android:layout_width="wrap_content"
+        android:layout_width="30dp"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@android:drawable/ic_menu_manage"
+        android:src="@drawable/ic_settingsicon"
         android:contentDescription="Configuración"
         app:tint="?attr/colorOnBackground"
         app:layout_constraintTop_toTopOf="parent"
