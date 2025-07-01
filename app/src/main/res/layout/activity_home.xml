@@ -30,8 +30,8 @@
         android:layout_alignParentBottom="true"
         app:menu="@menu/nav_menu"
         app:itemIconSize="24dp"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/white"
+        app:itemIconTint="@color/bottom_nav_colors"
+        app:itemTextColor="@color/bottom_nav_colors"
         app:labelVisibilityMode="labeled"
         app:itemHorizontalTranslationEnabled="false"
         app:itemIconPadding="12dp" />

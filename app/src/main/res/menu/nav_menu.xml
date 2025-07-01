@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/nav_home" android:icon="@drawable/home_light" android:title=""/>
-    <item android:id="@+id/nav_videos" android:icon="@drawable/video_light" android:title=""/>
-    <item android:id="@+id/nav_upload" android:icon="@drawable/upload_light" android:title=""/>
-    <item android:id="@+id/nav_notifications" android:icon="@drawable/notification_light" android:title=""/>
-    <item android:id="@+id/nav_profile" android:icon="@drawable/profile_light" android:title=""/>
+    <item android:id="@+id/nav_home" android:icon="@drawable/ic_home" android:title=""/>
+    <item android:id="@+id/nav_videos" android:icon="@drawable/ic_reels" android:title=""/>
+    <item android:id="@+id/nav_upload" android:icon="@drawable/ic_add" android:title=""/>
+    <item android:id="@+id/nav_notifications" android:icon="@drawable/ic_notifications" android:title=""/>
+    <item android:id="@+id/nav_profile" android:icon="@drawable/ic_profile_menu" android:title=""/>
 </menu>

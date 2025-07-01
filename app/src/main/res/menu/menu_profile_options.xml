@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_block"
+        android:title="Bloquear" />
+    <item
+        android:id="@+id/action_report"
+        android:title="Reportar" />
+    <item
+        android:id="@+id/action_restrict"
+        android:title="Restringir" />
+</menu>
