@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Buzzup"
         tools:targetApi="31">
         <activity
+            android:name=".HOME.Fragments.Editprofile.EditProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".HOME.HomeActivity"
             android:exported="false" />
         <activity
