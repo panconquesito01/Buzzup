@@ -215,7 +215,7 @@ public class LoginActivity extends AppCompatActivity {
      //Lanza la actividad de autenticación de dos factores.
 
     private void irADosFA() {
-        Intent intent = new Intent(LoginActivity.this, TwoFactorAuthActivity.class);
+        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
         startActivity(intent);
         finish();
     }
