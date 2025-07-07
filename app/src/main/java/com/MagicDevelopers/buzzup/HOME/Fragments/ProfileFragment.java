@@ -177,6 +177,7 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                if (!isAdded()) return;
                 Toast.makeText(requireContext(), "Error al cargar datos", Toast.LENGTH_SHORT).show();
             }
         });
