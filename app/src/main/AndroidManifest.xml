@@ -25,6 +25,18 @@
             android:name=".HOME.Fragments.Upload.UploadActivity"
             android:exported="false" />
         <activity
+            android:name=".HOME.Fragments.PerfilUsuarioActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HOME.Fragments.Settings.ChangePasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HOME.Fragments.Settings.AccountSettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HOME.Fragments.Settings.SettingsActivity"
+            android:exported="false" />
+        <activity
             android:name=".HOME.Fragments.Editprofile.EditProfileActivity"
             android:exported="false" />
         <activity
