@@ -1,5 +1,6 @@
 package com.MagicDevelopers.buzzup.HOME;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -10,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import com.MagicDevelopers.buzzup.HOME.Fragments.HomeFragment;
 import com.MagicDevelopers.buzzup.HOME.Fragments.NotificationsFragment;
 import com.MagicDevelopers.buzzup.HOME.Fragments.ProfileFragment;
-import com.MagicDevelopers.buzzup.HOME.Fragments.UploadFragment;
+import com.MagicDevelopers.buzzup.HOME.Fragments.Upload.UploadActivity;
 import com.MagicDevelopers.buzzup.HOME.Fragments.VideoFragment;
 import com.MagicDevelopers.buzzup.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -45,7 +46,9 @@ public class HomeActivity extends AppCompatActivity {
                 } else if (item.getItemId() == R.id.nav_videos) {
                     fragment = new VideoFragment();
                 } else if (item.getItemId() == R.id.nav_upload) {
-                    fragment = new UploadFragment();
+                    // Lanzar Activity de Upload
+                    startActivity(new Intent(HomeActivity.this, UploadActivity.class));
+                    return false;
                 } else if (item.getItemId() == R.id.nav_notifications) {
                     fragment = new NotificationsFragment();
                 } else if (item.getItemId() == R.id.nav_profile) {
